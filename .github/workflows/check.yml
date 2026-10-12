@@ -1,0 +1,17 @@
+name: Build and test
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Test metric calculations and unavailable interfaces
+        run: swift test
+      - name: Build the release app
+        run: ./scripts/build.sh
+      - name: Verify the local signature
+        run: codesign --verify --deep --strict dist/WiredStatus.app
+      - name: Analyze the C helper
+        run: xcrun clang --analyze -I Sources/NetworkCore/include Sources/NetworkCore/NetworkCore.c -o .build/network-analysis.plist
