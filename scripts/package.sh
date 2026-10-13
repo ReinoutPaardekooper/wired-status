@@ -4,6 +4,6 @@ project_root="${0:A:h:h}"
 cd "$project_root"
 ./scripts/build.sh
 arch_name="$(uname -m)"
-ditto -c -k --sequesterRsrc --keepParent dist/WiredStatus.app "dist/WiredStatus-$arch_name.zip"
-shasum -a 256 "dist/WiredStatus-$arch_name.zip" > "dist/WiredStatus-$arch_name.sha256"
+ditto -c -k --norsrc --noextattr --noqtn --noacl --keepParent dist/WiredStatus.app "dist/WiredStatus-$arch_name.zip"
+(cd dist && shasum -a 256 "WiredStatus-$arch_name.zip" > "WiredStatus-$arch_name.sha256")
 printf '%s\n' "$project_root/dist/WiredStatus-$arch_name.zip"

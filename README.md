@@ -48,7 +48,9 @@ The app stays out of the Dock. Click its menu-bar icon to open the panel. Open a
 
 To put the icon where Wi-Fi used to be, hold **⌘ Command** and drag it along the menu bar to that spot. WiredStatus sets a stable NSStatusItem autosave name so macOS remembers the position after relaunch. It is its own status item; it does not replace Apple's Wi-Fi control or take over Control Centre. [Apple's menu-bar guide](https://support.apple.com/en-hk/guide/mac-help/-mchlp1446/mac)
 
-A locally built Apple Silicon app is also attached to this private repository's [v1.0.1 release](https://github.com/ReinoutPaardekooper/wired-status/releases/tag/v1.0.1), with its SHA-256 checksum. The source build remains the inspectable way to reproduce it. No automatic updater contacts GitHub.
+A locally built Apple Silicon app is also attached to the [v1.0.1 release](https://github.com/ReinoutPaardekooper/wired-status/releases/tag/v1.0.1), with its SHA-256 checksum. The source build remains the inspectable way to reproduce it. No automatic updater contacts GitHub.
+
+Release packages omit filesystem extended attributes, quarantine metadata, and build-machine toolchain search paths. To verify a downloaded archive, put it beside the checksum file and run `shasum -a 256 -c WiredStatus-arm64.sha256`.
 
 ## Verify
 
