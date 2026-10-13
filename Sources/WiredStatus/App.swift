@@ -1,33 +1,5 @@
 import AppKit
 
-private func ethernetIcon(link: LinkState?, isDefault: Bool) -> NSImage {
-    let image = NSImage(size: NSSize(width: 22, height: 18), flipped: false) { _ in
-        NSColor.black.setStroke()
-        let path = NSBezierPath()
-        path.lineWidth = 1.25
-        path.lineJoinStyle = .round
-        path.move(to: NSPoint(x: 3, y: 14)); path.line(to: NSPoint(x: 19, y: 14))
-        path.line(to: NSPoint(x: 19, y: 5)); path.line(to: NSPoint(x: 15, y: 5))
-        path.line(to: NSPoint(x: 15, y: 2)); path.line(to: NSPoint(x: 7, y: 2))
-        path.line(to: NSPoint(x: 7, y: 5)); path.line(to: NSPoint(x: 3, y: 5)); path.close()
-        path.stroke()
-        for x in stride(from: 6.0, through: 16.0, by: 2.0) {
-            let pin = NSBezierPath(); pin.lineWidth = 1
-            pin.move(to: NSPoint(x: x, y: 14)); pin.line(to: NSPoint(x: x, y: 10)); pin.stroke()
-        }
-        if link != .connected {
-            let slash = NSBezierPath(); slash.lineWidth = 1.5
-            slash.move(to: NSPoint(x: 2, y: 1)); slash.line(to: NSPoint(x: 20, y: 17)); slash.stroke()
-        } else if !isDefault {
-            NSColor.black.setFill()
-            NSBezierPath(ovalIn: NSRect(x: 9.5, y: 5.5, width: 3, height: 3)).fill()
-        }
-        return true
-    }
-    image.isTemplate = true
-    return image
-}
-
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private var status: NSStatusItem!
     private let monitor = Monitor()
@@ -38,6 +10,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        status.autosaveName = NSStatusItem.AutosaveName("WiredStatus")
         status.button?.target = self
         status.button?.action = #selector(toggle)
         monitor.onChange = { [weak self] in self?.update() }

@@ -1,6 +1,6 @@
 # Performance and validation
 
-Measured locally on 12 October 2026: Apple M4 Mac Mini, macOS 26.3.1, Swift 6.3.3. The selected Ethernet adapter reported a real 1 Gbps full-duplex link and was the default IPv4 and IPv6 interface.
+Version 1.0.0 baseline, measured locally on 12 October 2026: Apple M4 Mac Mini, macOS 26.3.1, Swift 6.3.3. The selected Ethernet adapter reported a real 1 Gbps full-duplex link and was the default IPv4 and IPv6 interface. Version 1.0.1 changes only the menu-bar glyph and saved-position support; its sampling and network APIs are unchanged. The sizes and measurements below refer to the baseline build.
 
 ## Resource use
 

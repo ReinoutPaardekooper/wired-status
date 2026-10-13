@@ -4,7 +4,11 @@ A small, native Ethernet indicator for the macOS menu bar. Built from scratch in
 
 ## What you see
 
-- An Ethernet icon in the menu bar. A slash means no confirmed cable link; a dot means a cable is linked but the selected adapter is not the default network route.
+<img src="docs/screenshots/ethernet-symbol.png" alt="Classic Apple Ethernet-style mark" width="88">
+
+Native vector preview of the menu-bar mark.
+
+- Apple's classic `<•••>` Ethernet mark in the menu bar, drawn as a native template. A slash means no confirmed cable link; an extra dot underneath means a cable is linked but the selected adapter is not the default network route.
 - Negotiated link speed and duplex, including 1, 2.5, 5, and 10 Gbps Ethernet.
 - Live receive/send rates and a 60-second graph, sampled only while the panel is open.
 - Separate physical-link and default-route status for IPv4 and IPv6. A VPN or Wi-Fi default route is named rather than silently called Ethernet.
@@ -42,7 +46,9 @@ open "$HOME/Applications/WiredStatus.app"
 
 The app stays out of the Dock. Click its menu-bar icon to open the panel. Open at login is opt-in. Quit from the panel before rebuilding or replacing an installed copy.
 
-A locally built Apple Silicon app is also attached to this private repository's [v1.0.0 release](https://github.com/ReinoutPaardekooper/wired-status/releases/tag/v1.0.0), with its SHA-256 checksum. The source build remains the inspectable way to reproduce it. No automatic updater contacts GitHub.
+To put the icon where Wi-Fi used to be, hold **⌘ Command** and drag it along the menu bar to that spot. WiredStatus sets a stable NSStatusItem autosave name so macOS remembers the position after relaunch. It is its own status item; it does not replace Apple's Wi-Fi control or take over Control Centre. [Apple's menu-bar guide](https://support.apple.com/en-hk/guide/mac-help/-mchlp1446/mac)
+
+A locally built Apple Silicon app is also attached to this private repository's [v1.0.1 release](https://github.com/ReinoutPaardekooper/wired-status/releases/tag/v1.0.1), with its SHA-256 checksum. The source build remains the inspectable way to reproduce it. No automatic updater contacts GitHub.
 
 ## Verify
 
