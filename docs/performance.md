@@ -18,6 +18,19 @@ The ARM64 executable is **178,608 bytes (~174.4 KiB)**. A 10,000-read local coun
 
 These are short measurements on one real Mac, not guarantees for every driver, macOS version, or workload. No comparative Rust benchmark was performed.
 
+### Version 1.0.2 check
+
+Measured on the same Mac on 14 October 2026. The MAC field and filtered picker add no dependencies, background timers, or network requests. Metadata is cached during existing configuration refreshes. The ARM64 executable is 195,216 bytes, 16,592 bytes larger than version 1.0.1. All 10,000 local counter reads succeeded in 138.106 ms, or 13.811 µs per read.
+
+| State | CPU, one core | Physical footprint | Measurement window |
+| --- | ---: | ---: | ---: |
+| Fresh launch, icon idle | 0.0438% | 12.42 MB | 20.196 s |
+| Panel closed after use | 0.0060% | 29.95 MB | 20.186 s |
+
+The first window includes startup and framework work, so these short readings are not a before/after CPU comparison. The second window was confirmed to have a closed panel; a subsequent UI inspection reopened it with a fresh sampling baseline. The normal closed-panel sampler remains stopped.
+
+Nine unit tests passed, including new cases for idle linked adapters, default routes with unknown driver link status, disconnection, removal, preferred-adapter reconnection, and selecting the matching adapter's MAC. The reported MAC matched the selected interface in `ifconfig`. The installed app showed only the one adapter in use out of seven discovered interfaces, preserved its login setting, and hid MAC/IP/router fields when Hide addresses was enabled. The current connected screenshot shows this release; the disconnected screenshot retained in the repository is an earlier baseline image.
+
 ## Why this avoids consuming bandwidth
 
 The app reads existing kernel counters and SystemConfiguration data. It doesn't send probes, run speed tests, capture packets, create a proxy/VPN/filter, or sit in the packet forwarding path. Reviewing every source file found no backend URLs, HTTP clients, connect/send/recv calls, subprocess-based network tools, or packet-capture code. `lsof` found no TCP/UDP network connections owned by the live app, both while open and after closing. The SIOCGIFMEDIA helper opens a temporary local ioctl handle without sending anything.

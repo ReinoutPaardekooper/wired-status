@@ -38,7 +38,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             let controller = Panel(monitor: monitor)
             let p = NSPopover(); p.behavior = .transient; p.animates = false
             p.contentViewController = controller; p.delegate = self
-            p.contentSize = NSSize(width: 390, height: 610)
+            p.contentSize = Panel.preferredSize
             panel = controller; popover = p
         }
         monitor.show()

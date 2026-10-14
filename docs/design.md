@@ -18,6 +18,10 @@ SCNetworkInterfaceCopyAll discovers Ethernet-class interfaces. A read-only SIOCG
 
 SystemConfiguration's global PrimaryInterface values identify the default IPv4 and IPv6 paths. A physical Ethernet link can exist while Wi-Fi or a VPN is the default. The app displays those states separately. This is route information, not an active internet reachability test.
 
+The picker includes adapters with a confirmed link or a default route, even when no traffic is flowing. When none are in use, it keeps one disconnected selection so the user can see its state. An unavailable preferred adapter yields to an adapter in use and is restored on reconnect; removing an adapter falls back safely. The selection and picker list are cached during configuration refreshes.
+
+SCNetworkInterfaceGetHardwareAddressString supplies each Ethernet interface's MAC address during the same metadata refresh. The panel displays only the selected adapter's address. Hide addresses replaces the field's text and tooltip with "Hidden", so selecting or copying the field cannot reveal the hidden value. Wi-Fi addresses are not read for this field. The MAC lookup adds no timer or traffic.
+
 ## Counters
 
 The C helper reads the selected interface's IFMIB_IFDATA / IFDATA_GENERAL data directly into an ifmibdata structure on the stack. This avoids a heap-allocated dump of every route/interface. Counters are 64-bit. On the test Mac, NET_RT_IFLIST2 returned received bytes modulo 2^32 even though the returned structure had 64-bit fields; IFDATA_GENERAL matched netstat's full value exactly. That real-world check changed the implementation.
@@ -28,6 +32,7 @@ Rates use the actual monotonic elapsed time, rather than assuming the timer fire
 
 - [Apple: NSStatusItem](https://developer.apple.com/documentation/appkit/nsstatusitem)
 - [Apple: SCDynamicStoreSetNotificationKeys](https://developer.apple.com/documentation/systemconfiguration/scdynamicstoresetnotificationkeys(_:_:_:))
+- [Apple: SCNetworkInterfaceGetHardwareAddressString](https://developer.apple.com/documentation/systemconfiguration/scnetworkinterfacegethardwareaddressstring(_:))
 - [Apple: DispatchSourceTimer](https://developer.apple.com/documentation/dispatch/dispatchsourcetimer)
 - [Apple: ifmibdata](https://developer.apple.com/documentation/kernel/ifmibdata)
 - Darwin headers supplied by the local macOS SDK: net/if_media.h, net/if_mib.h, sys/resource.h.

@@ -8,6 +8,8 @@ final class Monitor {
     private var workspaceObservers: [NSObjectProtocol] = []
     private var previous: (name: String, sample: CounterSample, time: TimeInterval)?
     private(set) var interfaces: [InterfaceSnapshot] = []
+    private(set) var pickerInterfaces: [InterfaceSnapshot] = []
+    private(set) var selected: InterfaceSnapshot?
     private(set) var counters: CounterSample?
     private(set) var rate: TrafficRate = .zero
     private(set) var history: [TrafficRate] = []
@@ -17,13 +19,8 @@ final class Monitor {
     private(set) var notificationsWorking = false
     var isVisible = false
     var onChange: (() -> Void)?
-    var preferredName: String? = UserDefaults.standard.string(forKey: "selectedInterface")
+    private var preferredName: String? = UserDefaults.standard.string(forKey: "selectedInterface")
     private lazy var reader = NetworkReader(store: store)
-
-    var selected: InterfaceSnapshot? {
-        if let preferredName, let found = interfaces.first(where: { $0.name == preferredName }) { return found }
-        return interfaces.first
-    }
 
     init() {
         var context = SCDynamicStoreContext(version: 0, info: Unmanaged.passUnretained(self).toOpaque(),
@@ -70,6 +67,8 @@ final class Monitor {
         interfaces = reader.interfaces()
         primary4 = reader.primary4
         primary6 = reader.primary6
+        selected = InterfaceSelection.selected(from: interfaces, preferredName: preferredName, previousName: old?.name)
+        pickerInterfaces = InterfaceSelection.visible(from: interfaces, selectedName: selected?.name)
         if old?.name != selected?.name || old?.link != selected?.link { resetSamples() }
         // Configuration notifications update metadata, not the timed graph.
         // Only seed a baseline here; subsequent rate samples come from the timer.

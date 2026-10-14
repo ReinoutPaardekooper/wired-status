@@ -44,6 +44,7 @@ private final class TrafficGraph: NSView {
 }
 
 final class Panel: NSViewController {
+    static let preferredSize = NSSize(width: 390, height: 640)
     let monitor: Monitor
     private let state = text("Ethernet", size: 19, weight: .semibold)
     private let detail = text("", size: 12, color: .secondaryLabelColor)
@@ -63,7 +64,7 @@ final class Panel: NSViewController {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     override func loadView() {
-        let root = NSView(frame: NSRect(x: 0, y: 0, width: 390, height: 610))
+        let root = NSView(frame: NSRect(origin: .zero, size: Self.preferredSize))
         let stack = NSStackView()
         stack.orientation = .vertical; stack.alignment = .leading; stack.spacing = 12
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -93,7 +94,7 @@ final class Panel: NSViewController {
         graph.setAccessibilityLabel("Recent download and upload traffic, up to 60 seconds")
         full(graph); full(graphNote)
         full(separator())
-        for key in ["Link speed", "Duplex", "Default route", "Local IPv4", "Local IPv6", "Router"] { full(row(key)) }
+        for key in ["Link speed", "Duplex", "Default route", "MAC address", "Local IPv4", "Local IPv6", "Router"] { full(row(key)) }
         full(separator())
         full(text("INTERFACE COUNTERS", size: 10, weight: .semibold, color: .secondaryLabelColor))
         for key in ["Received / sent", "Receive / send errors", "Receive drops"] { full(row(key)) }
@@ -139,10 +140,11 @@ final class Panel: NSViewController {
 
     func refresh() {
         guard isViewLoaded else { return }
-        let names = monitor.interfaces.map(\.name)
-        if names != pickerNames {
+        let choices = monitor.pickerInterfaces
+        let names = choices.map(\.name)
+        if names != pickerNames || picker.numberOfItems == 0 {
             picker.removeAllItems()
-            for item in monitor.interfaces { picker.addItem(withTitle: "\(item.displayName) · \(item.name)") }
+            for item in choices { picker.addItem(withTitle: "\(item.displayName) · \(item.name)") }
             if names.isEmpty { picker.addItem(withTitle: "No Ethernet adapters") }
             pickerNames = names
         }
@@ -165,6 +167,7 @@ final class Panel: NSViewController {
         fields["Duplex"]?.updateText(item?.link == .connected ? item?.duplex ?? "—" : "—")
         fields["Default route"]?.updateText(MetricFormat.route(item, primary4: monitor.primary4, primary6: monitor.primary6))
         let hidden = hideAddresses.state == .on
+        fields["MAC address"]?.updateText(item?.macAddress.map { hidden ? "Hidden" : $0 } ?? "Unavailable")
         fields["Local IPv4"]?.updateText(address(item?.ipv4 ?? [], hidden: hidden))
         fields["Local IPv6"]?.updateText(address(item?.ipv6 ?? [], hidden: hidden))
         fields["Router"]?.updateText(address(item?.router.map { [$0] } ?? [], hidden: hidden))

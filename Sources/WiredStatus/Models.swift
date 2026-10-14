@@ -13,6 +13,26 @@ struct InterfaceSnapshot: Codable {
     var router: String?
     var primaryIPv4: Bool
     var primaryIPv6: Bool
+    var macAddress: String? = nil
+
+    // A quiet cable is still in use. Keep a default-route adapter visible even
+    // when its driver cannot report physical link state.
+    var isInUse: Bool { link == .connected || primaryIPv4 || primaryIPv6 }
+}
+
+enum InterfaceSelection {
+    static func selected(from interfaces: [InterfaceSnapshot], preferredName: String?, previousName: String?) -> InterfaceSnapshot? {
+        let preferred = interfaces.first { $0.name == preferredName }
+        if let preferred, preferred.isInUse { return preferred }
+        if let active = interfaces.first(where: \.isInUse) { return active }
+        // Keep the last adapter's disconnected state available. If it has been
+        // physically removed, fall back to one that macOS still knows about.
+        return interfaces.first { $0.name == previousName } ?? preferred ?? interfaces.first
+    }
+
+    static func visible(from interfaces: [InterfaceSnapshot], selectedName: String?) -> [InterfaceSnapshot] {
+        interfaces.filter { $0.isInUse || $0.name == selectedName }
+    }
 }
 
 struct CounterSample: Codable, Equatable {

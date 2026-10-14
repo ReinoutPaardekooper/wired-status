@@ -35,7 +35,8 @@ final class NetworkReader {
                                      ipv4: v4["Addresses"] as? [String] ?? [],
                                      ipv6: v6["Addresses"] as? [String] ?? [],
                                      router: v4["Router"] as? String ?? (name == p4 ? global4["Router"] as? String : nil),
-                                     primaryIPv4: name == p4, primaryIPv6: name == p6)
+                                     primaryIPv4: name == p4, primaryIPv6: name == p6,
+                                     macAddress: SCNetworkInterfaceGetHardwareAddressString(interface) as String?)
         }.sorted {
             let a = ($0.primaryIPv4 ? 4 : 0) + ($0.primaryIPv6 ? 2 : 0) + ($0.link == .connected ? 1 : 0)
             let b = ($1.primaryIPv4 ? 4 : 0) + ($1.primaryIPv6 ? 2 : 0) + ($1.link == .connected ? 1 : 0)

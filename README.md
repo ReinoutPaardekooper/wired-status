@@ -12,18 +12,18 @@ Native vector preview of the menu-bar mark.
 - Negotiated link speed and duplex, including 1, 2.5, 5, and 10 Gbps Ethernet.
 - Live receive/send rates and a 60-second graph, sampled only while the panel is open.
 - Separate physical-link and default-route status for IPv4 and IPv6. A VPN or Wi-Fi default route is named rather than silently called Ethernet.
-- Local addresses, hidden by default, and interface byte/error/drop counters.
-- A native optional Open at login setting and support for multiple adapters.
+- The selected Ethernet adapter's MAC address and local IP/router addresses, hidden by default, with selectable values for copying.
+- A native optional Open at login setting and a picker for adapters with a cable link or default route. Unused interfaces are hidden; one disconnected adapter remains available when none are in use.
 
 Link speed is the Ethernet connection's capacity, **not** an internet speed test. Live rates count all traffic on the selected adapter, including local-network traffic. The graph auto-scales; it isn't a percentage of the link's capacity. Interface errors are cumulative driver counters since reset and aren't an end-to-end packet-loss measurement.
 
+The picker uses connection metadata, so an idle adapter stays visible. It switches away from an unavailable saved selection when another adapter is in use, and restores a preferred adapter when it reconnects. If the last adapter disconnects, its state stays visible; if it is removed, selection safely falls back to an available interface. Metadata and MAC addresses are read only when configuration refreshes, not during the one-second traffic samples.
+
 ## Screenshots
 
-Captured from the app running on a real Mac. Addresses are hidden using its privacy setting. The disconnected screenshot selects an unused adapter; the active connection was not unplugged.
+Captured from version 1.0.2 running on a real Mac. Only its connected adapter appears in the picker. MAC, IP, and router addresses are hidden using the privacy setting.
 
-| Connected | Disconnected |
-| --- | --- |
-| <img src="docs/screenshots/connected.jpg" alt="Connected Ethernet and live metrics" width="390"> | <img src="docs/screenshots/disconnected.jpg" alt="Disconnected adapter" width="390"> |
+<img src="docs/screenshots/connected.jpg" alt="Connected Ethernet with a filtered adapter picker, live metrics, and hidden MAC address" width="390">
 
 ## Build and run
 
@@ -48,7 +48,7 @@ The app stays out of the Dock. Click its menu-bar icon to open the panel. Open a
 
 To put the icon where Wi-Fi used to be, hold **⌘ Command** and drag it along the menu bar to that spot. WiredStatus sets a stable NSStatusItem autosave name so macOS remembers the position after relaunch. It is its own status item; it does not replace Apple's Wi-Fi control or take over Control Centre. [Apple's menu-bar guide](https://support.apple.com/en-hk/guide/mac-help/-mchlp1446/mac)
 
-A locally built Apple Silicon app is also attached to the [v1.0.1 release](https://github.com/ReinoutPaardekooper/wired-status/releases/tag/v1.0.1), with its SHA-256 checksum. The source build remains the inspectable way to reproduce it. No automatic updater contacts GitHub.
+A locally built Apple Silicon app is also attached to the [v1.0.2 release](https://github.com/ReinoutPaardekooper/wired-status/releases/tag/v1.0.2), with its SHA-256 checksum. The source build remains the inspectable way to reproduce it. No automatic updater contacts GitHub.
 
 Release packages omit filesystem extended attributes, quarantine metadata, and build-machine toolchain search paths. To verify a downloaded archive, put it beside the checksum file and run `shasum -a 256 -c WiredStatus-arm64.sha256`.
 
@@ -60,7 +60,7 @@ dist/WiredStatus.app/Contents/MacOS/WiredStatus --diagnostics
 dist/WiredStatus.app/Contents/MacOS/WiredStatus --benchmark
 ```
 
-`--diagnostics` prints current local interface data, including addresses, to the terminal. Neither CLI mode contacts a server. `--benchmark` repeatedly reads existing kernel counters; it measures the cost of the app's sampling API, not network speed.
+`--diagnostics` prints current local interface data, including MAC and IP addresses, to the terminal; keep those outputs private. Neither CLI mode contacts a server. `--benchmark` repeatedly reads existing kernel counters; it measures the cost of the app's sampling API, not network speed.
 
 See [performance measurements and method](docs/performance.md) and [implementation decisions](docs/design.md). Generated builds and local measurement data are excluded from Git. There are no external dependencies, so no dependency lockfile is required.
 
